@@ -1,30 +1,26 @@
 package com.example.MiniS3.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "object_locations")
 public class Object {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
 
-    @Column(name = "tier")
-    private String tier;
 
     private String fileName;
 
+
     private float size;
 
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
-    private Timestamp movedAt;
-
-
-
-
+    public Object(String fileName, float size) {
+        this.fileName = fileName;
+        this.size = size;
+        this.createdAt = LocalDateTime.now();
+    }
 }

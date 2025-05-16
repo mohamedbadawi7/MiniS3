@@ -1,36 +1,13 @@
 package com.example.MiniS3.entities;
-import jakarta.persistence.*;
 
-import java.security.Timestamp;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "delete_node")
 public class DeleteNode {
 
-    @Id
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "fname")
-    private String fileName;
-
-    @Column(name = "size")
-    private float size;
-
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
-
-    @Column(name = "addedAt")
-    private LocalDateTime addedAt;
-
-
-    private int capacity;
-    private int load;
+    private float capacity;
+    private float load;
     private int uploadRequests;
     private int successfulUploads;
-    private int deleteRequests;
-    private int successfulDeletes;
+    private int purgeRequests;
+    private int successfulPurges;
     private int retrieveRequests;
     private int successfulRetrieves;
 
@@ -40,11 +17,97 @@ public class DeleteNode {
         this.load = 0;
         this.uploadRequests = 0;
         this.successfulUploads = 0;
-        this.deleteRequests = 0;
-        this.successfulDeletes = 0;
+        this.purgeRequests = 0;
+        this.successfulPurges = 0;
         this.retrieveRequests = 0;
         this.successfulRetrieves = 0;
     }
 
     public DeleteNode() {}
+
+    public float getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public float getLoad() {
+        return load;
+    }
+
+    public void setLoad(int load) {
+        this.load = load;
+    }
+
+    public int getUploadRequests() {
+        return uploadRequests;
+    }
+
+    public int getSuccessfulUploads() {
+        return successfulUploads;
+    }
+
+    public int getPurgeRequests() {
+        return purgeRequests;
+    }
+
+    public int getSuccessfulPurges() {
+        return successfulPurges;
+    }
+
+    public int getRetrieveRequests() {
+        return retrieveRequests;
+    }
+
+    public int getSuccessfulRetrieves() {
+        return successfulRetrieves;
+    }
+
+    public void updateLoad(float size) {
+        this.load = this.load + size;
+    }
+
+    public boolean atCapacity() {
+        return this.load >= this.capacity;
+    }
+
+    public void incrUploadRequests() {
+        this.uploadRequests++;
+    }
+
+    public void incrSuccessfulUploads() {
+        this.successfulUploads++;
+    }
+
+    public void incrDeleteRequests() {
+        this.purgeRequests++;
+    }
+
+    public void incrSuccessfulDeletes() {
+        this.successfulPurges++;
+    }
+
+    public void incrRetrieveRequests() {
+        this.retrieveRequests++;
+    }
+
+    public void incrSuccessfulRetrieves() {
+        this.successfulRetrieves++;
+    }
+
+    public void upload() {
+        //TODO//
+    }
+
+    public String retrieve() {
+        //TODO//
+
+        return "name";
+    }
+
+    public void purge() {
+        //TODO//
+    }
 }

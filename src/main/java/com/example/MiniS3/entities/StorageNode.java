@@ -1,38 +1,21 @@
 package com.example.MiniS3.entities;
 
-import jakarta.persistence.*;
 
-import java.security.Timestamp;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "storage_node")
 public class StorageNode {
 
-    @Id
-    @Column(name = "id")
-    private int id;
 
-    @Column(name = "fname")
-    private String fileName;
-
-    @Column(name = "size")
-    private float size;
-
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
-
-    @Column(name = "addedAt")
-    private LocalDateTime addedAt;
-
-    private int capacity;
-    private int load;
+    private float capacity;
+    private float load;
     private int uploadRequests;
     private int successfulUploads;
     private int deleteRequests;
     private int successfulDeletes;
     private int retrieveRequests;
     private int successfulRetrieves;
+    private List<StorageNodeObject> persistentObjects;
 
 
     public StorageNode(int capacity) {
@@ -44,7 +27,95 @@ public class StorageNode {
         this.successfulDeletes = 0;
         this.retrieveRequests = 0;
         this.successfulRetrieves = 0;
+        persistentObjects = new ArrayList<>();
     }
 
     public StorageNode() {}
+
+    public float getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public float getLoad() {
+        return load;
+    }
+
+    public void setLoad(int load) {
+        this.load = load;
+    }
+
+    public int getUploadRequests() {
+        return uploadRequests;
+    }
+
+    public int getSuccessfulUploads() {
+        return successfulUploads;
+    }
+
+    public int getDeleteRequests() {
+        return deleteRequests;
+    }
+
+    public int getSuccessfulDeletes() {
+        return successfulDeletes;
+    }
+
+    public int getRetrieveRequests() {
+        return retrieveRequests;
+    }
+
+    public int getSuccessfulRetrieves() {
+        return successfulRetrieves;
+    }
+
+    public void updateLoad(float size) {
+        this.load = this.load + size;
+    }
+
+    public boolean atCapacity() {
+        return this.load >= this.capacity;
+    }
+
+    public void incrUploadRequests() {
+        this.uploadRequests++;
+    }
+
+    public void incrSuccessfulUploads() {
+        this.successfulUploads++;
+    }
+
+    public void incrDeleteRequests() {
+        this.deleteRequests++;
+    }
+
+    public void incrSuccessfulDeletes() {
+        this.successfulDeletes++;
+    }
+
+    public void incrRetrieveRequests() {
+        this.retrieveRequests++;
+    }
+
+    public void incrSuccessfulRetrieves() {
+        this.successfulRetrieves++;
+    }
+
+    public void upload() {
+        //TODO//
+    }
+
+    public String retrieve() {
+        //TODO//
+
+        return "name";
+    }
+
+    public void delete() {
+        //TODO//
+    }
+
 }
