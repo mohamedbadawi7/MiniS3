@@ -143,6 +143,93 @@ public class StorageManagementController {
     @GetMapping("/retrieve/{id}")
     public String retrieve(@PathVariable int id) {
 
+        //From Storage Node, persistent storage
+        for (int i = 0; i < storageNode.getPersistentObjects().size(); i++) {
+
+            StorageNodeObject obj = storageNode.getPersistentObjects().get(i);
+
+            if (obj.getId() == id) {
+                System.out.println("Object found in Storage Node...");
+                storageNode.incrRetrieveRequests();
+                //Update obj and save it to persistent storage and db
+                LocalDateTime currentTime = LocalDateTime.now();
+                obj.setAccessed(currentTime);
+
+                StorageNodeObject newObj = storageNodeService.save(obj);
+                storageNode.incrSuccessfulRetrieves();
+                System.out.println("Object name...");
+                return obj.getFileName();
+            }
+        }
+
+        //From Backup Node, db
+        List<BackupNodeObject> backupNodeObjects = backupNodeService.findAll();
+        for (int i = 0; i < backupNodeObjects.size(); i++) {
+
+            BackupNodeObject obj = backupNodeObjects.get(i);
+
+            if (obj.getId() == id) {
+                System.out.println("Object found in Backup Node...");
+                backupNode.incrRetrieveRequests();
+
+                //Update obj, save it to storage node, remove from backup node
+                LocalDateTime currentTime = LocalDateTime.now();
+                obj.setAccessed(currentTime);
+
+                //Remove from backup node
+                backupNode.delete(obj);
+                backupNodeService.deleteByID(id);
+
+                //Save to storage node (persistent and db)
+                StorageNodeObject sno = new StorageNodeObject(obj.getId(), obj.getFileName(), obj.getSize(), obj.getCreatedAt(), obj.getAccessed());
+                storageNode.upload(sno);
+                StorageNodeObject snoNew = storageNodeService.save(sno);
+
+                //Object Location Update
+                ObjectLocations objloc = objectLocationsService.findById(obj.getId());
+                objloc.setTier("SN");
+                ObjectLocations newobj = objectLocationsService.save(objloc);
+
+                backupNode.incrSuccessfulRetrieves();
+                System.out.println("Object name...");
+                return obj.getFileName();
+            }
+        }
+
+        //From Delete Node, db
+        List<DeleteNodeObject> deleteNodeObjects = deleteNodeService.findAll();
+        for (int i = 0; i < deleteNodeObjects.size(); i++) {
+            DeleteNodeObject obj = deleteNodeObjects.get(i);
+
+            if (obj.getId() == id) {
+                System.out.println("Object found in Delete Node...");
+                deleteNode.incrRetrieveRequests();
+
+                //Update obj, save it to storage node, remove from backup node
+                LocalDateTime currentTime = LocalDateTime.now();
+                obj.setAccessed(currentTime);
+
+                //Remove from delete node
+                deleteNode.decrementLoad(obj.getSize());
+                deleteNodeService.deleteByID(id);
+
+                //Save to storage node (persistent and db)
+                StorageNodeObject sno = new StorageNodeObject(obj.getId(), obj.getFileName(), obj.getSize(), obj.getCreatedAt(), obj.getAccessed());
+                storageNode.upload(sno);
+                StorageNodeObject snoNew = storageNodeService.save(sno);
+
+                //Object Location Update
+                ObjectLocations objloc = objectLocationsService.findById(obj.getId());
+                objloc.setTier("SN");
+                ObjectLocations newobj = objectLocationsService.save(objloc);
+
+
+                deleteNode.incrSuccessfulRetrieves();
+                System.out.println("Object name...");
+                return obj.getFileName();
+            }
+        }
+        return "0";
     }
 
 
@@ -185,13 +272,61 @@ public class StorageManagementController {
         purge();
     }
 
-    //TODO//
     public void purge() {
         System.out.println("Beginning the purge...");
+
+        List<DeleteNodeObject> deleteNodeObjects = deleteNodeService.findAll();
+        deleteNodeObjects.forEach(o -> {
+            LocalDateTime currentTime = LocalDateTime.now();
+            Duration duration = Duration.between(o.getAccessed(), currentTime);
+            if (duration.toDays() >= 1) {
+                deleteNode.incrPurgeRequests();
+                System.out.println("Purged " + o.getFileName() + "...");
+                deleteNode.decrementLoad(o.getSize());
+                deleteNodeService.deleteByID(o.getId());
+                deleteNode.incrSuccessfulPurges();
+            }
+        });
 
 
         System.out.println("Purge over.");
 
     }
+
+    @GetMapping("/report")
+    public void reportSystemOverview() {
+        System.out.println("\n--- SYSTEM REPORT ---");
+
+        System.out.println("Storage Node:");
+        System.out.println("  Upload Requests: " + storageNode.getUploadRequests());
+        System.out.println("  Successful Uploads: " + storageNode.getSuccessfulUploads());
+        System.out.println("  Retrieve Requests: " + storageNode.getRetrieveRequests());
+        System.out.println("  Successful Retrieves: " + storageNode.getSuccessfulRetrieves());
+        System.out.println("  Delete Requests: " + storageNode.getDeleteRequests());
+        System.out.println("  Successful Deletes: " + storageNode.getSuccessfulDeletes());
+        System.out.println("  Current Load: " + storageNode.getLoad());
+        System.out.println("  Stored Objects: " + storageNode.getPersistentObjects().size());
+
+        System.out.println("\nBackup Node:");
+        System.out.println("  Upload Requests: " + backupNode.getUploadRequests());
+        System.out.println("  Successful Uploads: " + backupNode.getSuccessfulUploads());
+        System.out.println("  Retrieve Requests: " + backupNode.getRetrieveRequests());
+        System.out.println("  Successful Retrieves: " + backupNode.getSuccessfulRetrieves());
+        System.out.println("  Delete Requests: " + backupNode.getDeleteRequests());
+        System.out.println("  Successful Deletes: " + backupNode.getSuccessfulDeletes());
+        System.out.println("  Current Load: " + backupNode.getLoad());
+
+        System.out.println("\nDelete Node:");
+        System.out.println("  Upload Requests: " + deleteNode.getUploadRequests());
+        System.out.println("  Successful Uploads: " + deleteNode.getSuccessfulUploads());
+        System.out.println("  Retrieve Requests: " + deleteNode.getRetrieveRequests());
+        System.out.println("  Successful Retrieves: " + deleteNode.getSuccessfulRetrieves());
+        System.out.println("  Purge Requests: " + deleteNode.getPurgeRequests());
+        System.out.println("  Successful Purges: " + deleteNode.getSuccessfulPurges());
+        System.out.println("  Current Load: " + deleteNode.getLoad());
+
+        System.out.println("\n--- END REPORT ---\n");
+    }
+
 
 }

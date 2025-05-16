@@ -1,10 +1,10 @@
 package com.example.MiniS3.services;
 
 import com.example.MiniS3.entities.BackupNodeObject;
-import com.example.MiniS3.entities.StorageNodeObject;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public interface BackupNodeService {
@@ -16,6 +16,7 @@ public interface BackupNodeService {
     LocalDateTime findAccessedByID(int id);
     void save(BackupNodeObject backupNodeObject);
     void deleteByID(int id);
+    List<BackupNodeObject> findAll();
 
 
 }

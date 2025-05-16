@@ -32,6 +32,14 @@ public class StorageNodeObject {
         this.accessed = LocalDateTime.now();
     }
 
+    public StorageNodeObject(int id, String fileName, float size, LocalDateTime createdAt, LocalDateTime accessed) {
+        this.id = id;
+        this.fileName = fileName;
+        this.size = size;
+        this.createdAt = createdAt;
+        this.accessed = accessed;
+    }
+
     public StorageNodeObject() {}
 
     public int getId() {

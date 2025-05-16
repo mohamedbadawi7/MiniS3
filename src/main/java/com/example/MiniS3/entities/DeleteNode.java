@@ -81,11 +81,11 @@ public class DeleteNode {
         this.successfulUploads++;
     }
 
-    public void incrDeleteRequests() {
+    public void incrPurgeRequests() {
         this.purgeRequests++;
     }
 
-    public void incrSuccessfulDeletes() {
+    public void incrSuccessfulPurges() {
         this.successfulPurges++;
     }
 
