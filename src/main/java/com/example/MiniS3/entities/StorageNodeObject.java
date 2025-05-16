@@ -24,7 +24,7 @@ public class StorageNodeObject {
     @Column(name = "accessed")
     private LocalDateTime accessed;
 
-    public StorageNodeObject(String fileName, float size, LocalDateTime createdAt, LocalDateTime accessed) {
+    public StorageNodeObject(String fileName, float size) {
         this.fileName = fileName;
         this.size = size;
         this.createdAt = LocalDateTime.now();
@@ -32,6 +32,10 @@ public class StorageNodeObject {
     }
 
     public StorageNodeObject() {}
+
+    public int getId() {
+        return id;
+    }
 
     public String getFileName() {
         return fileName;

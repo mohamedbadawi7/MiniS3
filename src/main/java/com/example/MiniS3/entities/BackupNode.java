@@ -97,8 +97,9 @@ public class BackupNode {
         this.successfulRetrieves++;
     }
 
-    public void upload() {
+    public int upload(BackupNodeObject bng) {
         //TODO//
+        return 200;
     }
 
     public String retrieve() {

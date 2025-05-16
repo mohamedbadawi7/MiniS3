@@ -7,20 +7,30 @@ import java.time.LocalDateTime;
 
 public class Object {
 
-
-    private int id;
-
-
     private String fileName;
 
 
     private float size;
 
-    private LocalDateTime createdAt;
 
     public Object(String fileName, float size) {
         this.fileName = fileName;
         this.size = size;
-        this.createdAt = LocalDateTime.now();
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public float getSize() {
+        return size;
+    }
+
+    public void setSize(float size) {
+        this.size = size;
     }
 }

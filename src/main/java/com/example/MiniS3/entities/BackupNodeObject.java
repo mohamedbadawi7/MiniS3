@@ -24,7 +24,8 @@ public class BackupNodeObject {
     @Column(name = "accessed")
     private LocalDateTime accessed;
 
-    public BackupNodeObject(String fileName, float size, LocalDateTime createdAt, LocalDateTime accessed) {
+    public BackupNodeObject(int id, String fileName, float size) {
+        this.id = id;
         this.fileName = fileName;
         this.size = size;
         this.createdAt = LocalDateTime.now();
@@ -32,6 +33,10 @@ public class BackupNodeObject {
     }
 
     public BackupNodeObject() {}
+
+    public int getId() {
+        return id;
+    }
 
     public String getFileName() {
         return fileName;

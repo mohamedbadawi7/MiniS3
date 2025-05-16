@@ -104,8 +104,26 @@ public class StorageNode {
         this.successfulRetrieves++;
     }
 
-    public void upload() {
-        //TODO//
+    public List<StorageNodeObject> getPersistentObjects() {
+        return persistentObjects;
+    }
+
+    public void setPersistentObjects(List<StorageNodeObject> persistentObjects) {
+        this.persistentObjects = persistentObjects;
+    }
+
+    public int removeObject(StorageNodeObject object) {
+        if (persistentObjects.contains(object)) {
+            persistentObjects.remove(object);
+            return 200;
+        } else {
+            return 400;
+        }
+    }
+
+    public int upload(StorageNodeObject obj) {
+        persistentObjects.add(obj);
+        return 200;
     }
 
     public String retrieve() {

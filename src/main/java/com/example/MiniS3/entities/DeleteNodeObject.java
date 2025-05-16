@@ -23,7 +23,8 @@ public class DeleteNodeObject {
     @Column(name = "accessed")
     private LocalDateTime accessed;
 
-    public DeleteNodeObject(String fileName, float size, LocalDateTime createdAt, LocalDateTime accessed) {
+    public DeleteNodeObject(int id, String fileName, float size) {
+        this.id = id;
         this.fileName = fileName;
         this.size = size;
         this.createdAt = LocalDateTime.now();
@@ -31,6 +32,10 @@ public class DeleteNodeObject {
     }
 
     public DeleteNodeObject() {}
+
+    public int getId() {
+        return id;
+    }
 
     public String getFileName() {
         return fileName;
