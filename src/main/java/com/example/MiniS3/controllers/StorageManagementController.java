@@ -60,16 +60,13 @@ public class StorageManagementController {
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable int id) {
 
+        //Storage to Delete
         System.out.println("Searching for object in node storage...");
         List<StorageNodeObject> toBeRemoved = new ArrayList<>();
+        boolean found = false;
         storageNode.getPersistentObjects().forEach(o -> {
             if (o.getId() == id) {
                 System.out.println("Object being deleted from storage node...");
-
-                //Object Location Update
-                ObjectLocations objloc = objectLocationsService.findById(id);
-                objloc.setTier("DN");
-                ObjectLocations newobj = objectLocationsService.save(objloc);
 
                 //Add to Delete Node
                 deleteNode.incrUploadRequests();
@@ -84,19 +81,67 @@ public class StorageManagementController {
                     //Remove From Storage Node
                     storageNode.incrDeleteRequests();
                     storageNodeService.deleteByID(o.getId()); //Delete given record by id
-                    storageNode.decrementLoad(o.getSize()); //Reduce the load of the storage node
+                    storageNode.delete(o); //Reduce the load of the storage node
                     toBeRemoved.add(o);
+                    storageNode.incrSuccessfulDeletes();
                     System.out.println("Object deleted from storage node...");
+
+                    ObjectLocations objloc = objectLocationsService.findById(id);
+                    objloc.setTier("DN");
+                    ObjectLocations newobj = objectLocationsService.save(objloc);
 
                 } else {
                     System.out.println("Object cannot be deleted... Garbage is full.");
+                    return;
                 }
 
             }
         });
         toBeRemoved.forEach(o -> {
             storageNode.removeObject(o);
+            return;
         });
+
+        //Backup to Delete
+        System.out.println("Searching for object in backup storage...");
+        BackupNodeObject backupObj = backupNodeService.findByID(id); //Retrieve intended ID
+        if (backupObj != null) { //Ensure that the given id is real
+
+            System.out.println("Object found in backup storage...");
+            backupNode.incrDeleteRequests(); //Increment number of delete requests in backup node
+
+            deleteNode.incrUploadRequests(); //Increment number of upload requests in delete node
+            DeleteNodeObject deleteObj = new DeleteNodeObject(backupObj.getId(), backupObj.getFileName(), backupObj.getSize()); //create new delete object
+            int res = deleteNode.upload(deleteObj); //attempt to upload the object load onto the node
+
+            if (res == 200) { //with success
+
+                //Add to Delete Node
+                deleteNodeService.save(deleteObj);
+                System.out.println("Object added to delete node...");
+
+                //Remove From Backup Node
+                int res1 = backupNode.delete(backupObj);
+                if (res1 == 200) {
+                    backupNodeService.deleteByID(id);
+                    backupNode.incrSuccessfulDeletes();
+                }
+
+                //Change Object Location
+                ObjectLocations objloc = objectLocationsService.findById(id);
+                objloc.setTier("DN");
+                ObjectLocations newobj = objectLocationsService.save(objloc);
+            } else {
+                System.out.println("Object cannot be deleted... Garbage is full.");
+            }
+        } else {
+            System.out.println("Object not found in backup storage...");
+        }
+
+    }
+
+    @GetMapping("/retrieve/{id}")
+    public String retrieve(@PathVariable int id) {
 
     }
 

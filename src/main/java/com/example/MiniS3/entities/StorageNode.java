@@ -142,8 +142,8 @@ public class StorageNode {
         return "name";
     }
 
-    public void delete() {
-        //TODO//
+    public void delete(StorageNodeObject obj) {
+        decrementLoad(obj.getSize());
     }
 
 }

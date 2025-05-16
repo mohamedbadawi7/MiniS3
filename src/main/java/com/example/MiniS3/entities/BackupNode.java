@@ -117,7 +117,13 @@ public class BackupNode {
         return "name";
     }
 
-    public void delete() {
-        //TODO//
+    public int delete(BackupNodeObject obj) {
+
+        if (this.load > 0) {
+            decrementLoad(obj.getSize());
+            return 200;
+        } else {
+            return 400;
+        }
     }
 }
