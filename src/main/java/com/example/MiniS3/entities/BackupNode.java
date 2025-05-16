@@ -97,9 +97,19 @@ public class BackupNode {
         this.successfulRetrieves++;
     }
 
+    public void decrementLoad(float size) {
+        this.load -= size;
+    }
+
     public int upload(BackupNodeObject bng) {
         //TODO//
-        return 200;
+        updateLoad(bng.getSize());
+        if (!atCapacity()) {
+            return 200;
+        } else {
+            decrementLoad(bng.getSize());
+            return 400;
+        }
     }
 
     public String retrieve() {

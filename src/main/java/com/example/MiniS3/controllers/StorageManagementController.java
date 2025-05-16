@@ -69,7 +69,7 @@ public class StorageManagementController {
             }
         });
         toBeRemoved.forEach(o -> {
-            storageNodeService.deleteByID(o.getId());
+            storageNode.removeObject(o);
         });
     }
 

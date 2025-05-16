@@ -121,9 +121,19 @@ public class StorageNode {
         }
     }
 
+    public void decrementLoad(float size) {
+        this.load -= size;
+    }
+
     public int upload(StorageNodeObject obj) {
-        persistentObjects.add(obj);
-        return 200;
+        updateLoad(obj.getSize());
+        if (!atCapacity()) {
+            persistentObjects.add(obj);
+            return 200;
+        } else {
+            decrementLoad(obj.getSize());
+            return 400;
+        }
     }
 
     public String retrieve() {
