@@ -29,4 +29,8 @@ public class ObjectLocations {
     public void setTier(String tier) {
         this.tier = tier;
     }
+
+    public int getId() {
+        return id;
+    }
 }

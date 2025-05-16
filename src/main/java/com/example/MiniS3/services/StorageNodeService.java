@@ -13,7 +13,7 @@ public interface StorageNodeService {
     float findSizeByID(int id);
     LocalDateTime findCreatedAtByID(int id);
     LocalDateTime findAccessedByID(int id);
-    void save(StorageNodeObject storageNodeObject);
+    StorageNodeObject save(StorageNodeObject storageNodeObject);
     void deleteByID(int id);
 
 }

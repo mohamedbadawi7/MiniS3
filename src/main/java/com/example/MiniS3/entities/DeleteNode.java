@@ -97,8 +97,19 @@ public class DeleteNode {
         this.successfulRetrieves++;
     }
 
-    public void upload() {
-        //TODO//
+
+    public void decrementLoad(float size) {
+        this.load -= size;
+    }
+
+    public int upload(DeleteNodeObject dng) {
+        updateLoad(dng.getSize());
+        if (!atCapacity()) {
+            return 200;
+        } else {
+            decrementLoad(dng.getSize());
+            return 400;
+        }
     }
 
     public String retrieve() {

@@ -102,7 +102,6 @@ public class BackupNode {
     }
 
     public int upload(BackupNodeObject bng) {
-        //TODO//
         updateLoad(bng.getSize());
         if (!atCapacity()) {
             return 200;
